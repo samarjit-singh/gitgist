@@ -33,11 +33,15 @@ export function AppSidebar() {
   const pathname = usePathname();
   return (
     <Sidebar collapsible="icon" variant="floating">
-      <SidebarHeader>Logo</SidebarHeader>
+      <SidebarHeader className="rounded-t-md bg-[#E7FBB4] text-[#A294F9]">
+        <span className="font-bold">👾 GitGist</span>
+      </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="rounded-b-md bg-[#FF8383] text-[#E7FBB4]">
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[#E7FBB4]">
+            Application
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
@@ -48,7 +52,7 @@ export function AppSidebar() {
                         href={item.url}
                         className={cn(
                           {
-                            "!bg-primary !text-white": pathname === item.url,
+                            "!bg-[#A1D6CB] !text-white": pathname === item.url,
                           },
                           "list-none",
                         )}
@@ -65,7 +69,9 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Your Projects</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[#E7FBB4]">
+            Your Projects
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {projects.map((projects) => {
@@ -77,7 +83,7 @@ export function AppSidebar() {
                           className={cn(
                             "flex size-6 items-center justify-center rounded-sm border bg-white text-sm text-primary",
                             {
-                              "bg-primary text-white": true,
+                              "bg-[#A19AD3] text-white": true,
                               // "bg-primary text-white":
                               //   project.id === project.id,
                             },
@@ -94,7 +100,11 @@ export function AppSidebar() {
               <div className="h-2"></div>
               <SidebarMenuItem>
                 <Link href="/create">
-                  <Button size="sm" variant={"outline"} className="w-fit">
+                  <Button
+                    size="sm"
+                    variant={"outline"}
+                    className="w-fit bg-[#A19AD3]"
+                  >
                     <PlusIcon />
                     Create Project
                   </Button>
