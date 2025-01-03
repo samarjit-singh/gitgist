@@ -11,6 +11,7 @@ import {
   SidebarGroupContent,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { Bot, CreditCard, LayoutDashboard, PlusIcon } from "lucide-react";
@@ -31,13 +32,21 @@ const projects = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { open } = useSidebar();
   return (
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader className="rounded-t-md bg-[#E7FBB4] text-[#A294F9]">
-        <span className="font-bold">👾 GitGist</span>
+        <div
+          className={`flex items-center gap-2 text-xl font-bold ${
+            open ? "justify-start" : "justify-center"
+          }`}
+        >
+          👾
+          {open && <h1>GitGist</h1>}
+        </div>
       </SidebarHeader>
 
-      <SidebarContent className="rounded-b-md bg-[#FF8383] text-[#E7FBB4]">
+      <SidebarContent className="rounded-b-md bg-[#3D3D3D] text-[#E7FBB4]">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[#E7FBB4]">
             Application
@@ -98,18 +107,20 @@ export function AppSidebar() {
                 );
               })}
               <div className="h-2"></div>
-              <SidebarMenuItem>
-                <Link href="/create">
-                  <Button
-                    size="sm"
-                    variant={"outline"}
-                    className="w-fit bg-[#A19AD3]"
-                  >
-                    <PlusIcon />
-                    Create Project
-                  </Button>
-                </Link>
-              </SidebarMenuItem>
+              {open && (
+                <SidebarMenuItem>
+                  <Link href="/create">
+                    <Button
+                      size="sm"
+                      variant={"outline"}
+                      className="w-fit bg-[#A19AD3]"
+                    >
+                      <PlusIcon />
+                      Create Project
+                    </Button>
+                  </Link>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
