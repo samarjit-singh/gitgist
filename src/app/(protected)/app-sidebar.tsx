@@ -88,7 +88,7 @@ export function AppSidebar() {
                       <div onClick={() => setProjectId(project.id)}>
                         <div
                           className={cn(
-                            "flex size-6 items-center justify-center rounded-sm border bg-white text-sm text-primary",
+                            "flex size-6 items-center justify-center rounded-sm border bg-[#A1D6CB] text-sm text-primary",
                             {
                               // "bg-[#A19AD3] text-white":
                               "bg-[#A19AD3] text-white":
