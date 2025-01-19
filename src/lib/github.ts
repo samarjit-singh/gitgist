@@ -1,11 +1,11 @@
 import { db } from "@/server/db";
 import { Octokit } from "octokit";
+import axios from "axios";
+import { aiSummarizeCommits } from "./gemini";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
-
-const gitHubUrl = "https://github.com/samarjit-singh/gitgist";
 
 type Response = {
   commitHash: string;
@@ -83,7 +83,16 @@ async function filterUnprocessedCommits(
   return unprocessedCommits;
 }
 
-async function summarizeCommits(githubUrl: string, commitHashes: string) {}
+async function summarizeCommits(githubUrl: string, commitHashes: string) {
+  const { data } = await axios.get(`${githubUrl}/commit/${commitHashes}.diff`, {
+    headers: {
+      Accept: "application/vnd.github.v3.diff", // this is github own custom formating
+    },
+  });
+
+  return await aiSummarizeCommits(data);
+}
+
 export const pollCommits = async (projectId: string) => {
   const { project, githubUrl } = await fetchProjectGithubUrl(projectId);
   const commitHashes = await getCommitHashes(githubUrl);
@@ -91,10 +100,36 @@ export const pollCommits = async (projectId: string) => {
     projectId,
     commitHashes,
   );
+  const summaryResponses = await Promise.allSettled(
+    unprocessedCommits.map((commit) => {
+      return summarizeCommits(githubUrl, commit.commitHash);
+    }),
+  );
+  const summaries = summaryResponses.map((response) => {
+    if (response.status === "fulfilled") {
+      return response.value as string;
+    }
+    return "";
+  });
 
-  console.log("unprocessedCommits", unprocessedCommits);
+  const commits = await db.commit.createMany({
+    data: summaries.map((summary, index) => {
+      if (!summary) {
+        console.warn(
+          `Empty summary for commit ${unprocessedCommits[index]?.commitHash}`,
+        );
+      }
+      return {
+        projectId: projectId,
+        commitHash: unprocessedCommits[index]!.commitHash,
+        commitMessage: unprocessedCommits[index]!.commitMessage,
+        commitAuthorName: unprocessedCommits[index]!.commitAuthorName,
+        commitAuthorAvatar: unprocessedCommits[index]!.commitAuthorAvatar,
+        commitDate: unprocessedCommits[index]!.commitDate,
+        summary,
+      };
+    }),
+  });
 
-  return unprocessedCommits;
+  return commits;
 };
-
-pollCommits("cm5i4lgni00031zf57s1cu57l").then(console.log);
