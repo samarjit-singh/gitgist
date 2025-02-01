@@ -12,6 +12,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // create the project in the database
       const project = await ctx.db.project.create({
         data: {
           name: input.name,
@@ -24,6 +25,7 @@ export const projectRouter = createTRPCRouter({
         },
       });
 
+      // storing project commit summary in database
       await pollCommits(project.id);
 
       return project;
@@ -43,4 +45,19 @@ export const projectRouter = createTRPCRouter({
 
     return projects;
   }),
+
+  getCommits: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      pollCommits(input.projectId).then().catch(console.error);
+      return await ctx.db.commit.findMany({
+        where: {
+          projectId: input.projectId,
+        },
+      });
+    }),
 });

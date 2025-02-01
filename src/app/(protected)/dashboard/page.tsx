@@ -4,6 +4,7 @@ import useProject from "@/hooks/use-project";
 import { useUser } from "@clerk/nextjs";
 import { ExternalLinkIcon, Github } from "lucide-react";
 import Link from "next/link";
+import CommitLog from "./commit-log";
 
 const page = () => {
   const { user } = useUser();
@@ -11,7 +12,6 @@ const page = () => {
 
   return (
     <div>
-      {project?.id}
       <div className="flex flex-wrap items-center justify-between gap-y-4">
         {/* github link */}
         <div className="w-fit rounded-md bg-[#FFF574] px-4 py-3">
@@ -44,7 +44,8 @@ const page = () => {
         </div>
       </div>
 
-      <div className="mt-8">CommitLog</div>
+      <div className="mt-8"></div>
+      <CommitLog />
     </div>
   );
 };
