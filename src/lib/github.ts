@@ -1,5 +1,5 @@
 import { db } from "@/server/db";
-import { Octokit } from "octokit";
+import { Octokit } from "octokit"; // library for interacting with github api
 import axios from "axios";
 import { aiSummarizeCommits } from "./gemini";
 
@@ -35,11 +35,14 @@ export const getCommitHashes = async (
   });
 
   return sortedCommits.slice(0, 10).map((commit: any) => {
+    const authorAvatar =
+      commit.author?.avatar_url ?? commit.committer?.avatar_url ?? "";
+
     return {
       commitHash: commit.sha ?? "",
       commitMessage: commit.commit.message ?? "",
       commitAuthorName: commit.commit.author.name ?? "",
-      commitAuthorAvatar: commit.commit.author.avatar_url ?? "",
+      commitAuthorAvatar: authorAvatar,
       commitDate: commit.commit.author.date ?? "",
     };
   });
